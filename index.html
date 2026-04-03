@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cement & Clinker CO₂ Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .label-with-unit {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+
+        .unit {
+            font-size: 12px;
+            color: #999;
+            font-weight: 400;
+        }
+
+        input[type="number"] {
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        input[type="number"].error {
+            border-color: #e74c3c;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+            transform: translateY(-2px);
+        }
+
+        .btn-toggle {
+            padding: 8px 16px;
+            background: #ecf0f1;
+            color: #333;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-toggle.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .btn-toggle:hover {
+            border-color: #667eea;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 13px;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .results-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 25px;
+            margin-top: 30px;
+            display: none;
+        }
+
+        .results-section.show {
+            display: block;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .result-box {
+            background: white;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .result-label {
+            font-size: 12px;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .result-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .result-unit {
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        .copy-btn {
+            background: #27ae60;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: #229954;
+        }
+
+        .copy-btn.copied {
+            background: #16a085;
+        }
+
+        .info-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .scope2-toggle {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #ecf0f1;
+            border-radius: 6px;
+        }
+
+        .scope2-toggle label {
+            margin: 0;
+        }
+
+        .scope2-inputs {
+            display: none;
+        }
+
+        .scope2-inputs.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .error-box {
+            background: #fadbd8;
+            border-left: 4px solid #e74c3c;
+            padding: 15px;
+            border-radius: 6px;
+            color: #c0392b;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error-box.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏭 Cement & Clinker CO₂ Calculator</h1>
+        <p class="subtitle">Calculate Scope 1 and Scope 2 CO₂ Emissions</p>
+
+        <div class="error-box" id="errorBox"></div>
+
+        <!-- SCOPE 1 INPUTS -->
+        <div class="form-section">
+            <div class="section-title">Scope 1 - Process & Fuel Emissions</div>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="label-with-unit">
+                        Clinker Factor (CF)
+                        <span class="unit">%</span>
+                    </label>
+                    <input type="number" id="cf" placeholder="e.g., 85" min="0" step="0.01">
+                    <div class="error-message" id="cfError"></div>
+                    <p class="info-text">Ratio of clinker to cement produced</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="label-with-unit">
+                        Specific Thermal Energy (ST)
+                        <span class="unit">MJ/ton clinker</span>
+                    </label>
+                    <input type="number" id="st" placeholder="e.g., 3200" min="0" step="0.01">
+                    <div class="error-message" id="stError"></div>
+                    <p class="info-text">Heat consumption in production</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="label-with-unit">
+                        TSR Biomass (BM)
+                        <span class="unit">%</span>
+                    </label>
+                    <input type="number" id="bm" placeholder="e.g., 0" min="0" max="100" step="0.01">
+                    <div class="error-message" id="bmError"></div>
+                    <p class="info-text">Biomass thermal substitution rate</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="label-with-unit">
+                        TSR Alternative Fuel (AF)
+                        <span class="unit">%</span>
+                    </label>
+                    <input type="number" id="af" placeholder="e.g., 10" min="0" max="100" step="0.01">
+                    <div class="error-message" id="afError"></div>
+                    <p class="info-text">Alternative fuel thermal substitution rate</p>
+                </div>
+            </div>
+
+            <!-- Calcination Factor Selection -->
+            <div class="form-group">
+                <label>Calcination Factor Selection</label>
+                <div class="button-group">
+                    <button class="btn-toggle active" id="btnCalfDefault">Use Default (530)</button>
+                    <button class="btn-toggle" id="btnCalfCalculated">Calculate from Clinker and Raw Materials</button>
+                </div>
+                <p class="info-text">Choose how to determine the calcination factor</p>
+            </div>
+
+            <!-- Calcination Factor Calculated Inputs (Hidden by default) -->
+            <div id="calfCalculatedInputs" style="display: none;">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="label-with-unit">
+                            CaO in Clinker
+                            <span class="unit">%</span>
+                        </label>
+                        <input type="number" id="caoClinik" placeholder="e.g., 65" min="0" max="100" step="0.01">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label-with-unit">
+                            MgO in Clinker
+                            <span class="unit">%</span>
+                        </label>
+                        <input type="number" id="mgoClinik" placeholder="e.g., 2" min="0" max="100" step="0.01">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label-with-unit">
+                            CaO in Alternative Raw Material (AR)
+                            <span class="unit">%</span>
+                        </label>
+                        <input type="number" id="caoAR" placeholder="e.g., 40" min="0" max="100" step="0.01">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label-with-unit">
+                            MgO in AR
+                            <span class="unit">%</span>
+                        </label>
+                        <input type="number" id="mgoAR" placeholder="e.g., 5" min="0" max="100" step="0.01">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label-with-unit">
+                            Quantity of AR
+                            <span class="unit">%</span>
+                        </label>
+                        <input type="number" id="quantityAR" placeholder="e.g., 10" min="0" max="100" step="0.01">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCOPE 2 TOGGLE -->
+        <div class="scope2-toggle">
+            <label for="scope2Toggle" style="margin: 0;">
+                <strong>Include Scope 2 (Electricity)?</strong>
+            </label>
+            <button class="btn-toggle" id="scope2Toggle">Enable Scope 2</button>
+        </div>
+
+        <!-- SCOPE 2 INPUTS -->
+        <div id="scope2Inputs" class="scope2-inputs">
+            <div class="form-section">
+                <div class="section-title">Scope 2 - Electricity Emissions</div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="label-with-unit">
+                            SEC Cement from PLN (Grid)
+                            <span class="unit">kWh/ton cement</span>
+                        </label>
+                        <input type="number" id="secCemPLN" placeholder="e.g., 120" min="0" step="0.01">
+                        <div class="error-message" id="secCemPLNError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label-with-unit">
+                            SEC Cement from Renewable
+                            <span class="unit">kWh/ton cement</span>
+                        </label>
+                        <input type="number" id="secCemRen" placeholder="e.g., 30" min="0" step="0.01">
+                        <div class="error-message" id="secCemRenError"></div>
+                        <p class="info-text">e.g., PLTS/WHR renewable energy</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label-with-unit">
+                            SEC Clinker from PLN (Grid)
+                            <span class="unit">kWh/ton clinker</span>
+                        </label>
+                        <input type="number" id="secClinkPLN" placeholder="e.g., 140" min="0" step="0.01">
+                        <div class="error-message" id="secClinkPLNError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label-with-unit">
+                            SEC Clinker from Renewable
+                            <span class="unit">kWh/ton clinker</span>
+                        </label>
+                        <input type="number" id="secClinkRen" placeholder="e.g., 35" min="0" step="0.01">
+                        <div class="error-message" id="secClinkRenError"></div>
+                        <p class="info-text">e.g., PLTS/WHR renewable energy</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label-with-unit">
+                            PLN Grid Electricity Emissions
+                            <span class="unit">ton CO₂/MWh</span>
+                        </label>
+                        <input type="number" id="gridCO2" placeholder="0.87" value="0.87" min="0" step="0.01">
+                        <div class="error-message" id="gridCO2Error"></div>
+                        <p class="info-text">Default: 0.87 (Indonesia PLN average)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BUTTONS -->
+        <div class="button-group">
+            <button class="btn btn-primary" id="calculateBtn">📊 Calculate</button>
+            <button class="btn btn-secondary" id="resetBtn">🔄 Reset</button>
+        </div>
+
+        <!-- RESULTS -->
+        <div id="resultsSection" class="results-section">
+            <div class="section-title">📈 Results</div>
+            
+            <div class="results-grid">
+                <div class="result-box">
+                    <div class="result-label">Calcination Factor</div>
+                    <div class="result-value" id="resultCalF">—</div>
+                    <div class="result-unit">kg CO₂/ton clinker</div>
+                </div>
+
+                <div class="result-box">
+                    <div class="result-label">Gross CO₂ Cement (Scope 1)</div>
+                    <div class="result-value" id="resultGrossCO2Cem">—</div>
+                    <div class="result-unit">kg CO₂/ton cement</div>
+                </div>
+
+                <div class="result-box">
+                    <div class="result-label">Net CO₂ Cement (Scope 1)</div>
+                    <div class="result-value" id="resultNetCO2Cem">—</div>
+                    <div class="result-unit">kg CO₂/ton cement</div>
+                </div>
+
+                <div class="result-box">
+                    <div class="result-label">Gross CO₂ Clinker (Scope 1)</div>
+                    <div class="result-value" id="resultGrossCO2Clink">—</div>
+                    <div class="result-unit">kg CO₂/ton clinker</div>
+                </div>
+
+                <div class="result-box">
+                    <div class="result-label">Net CO₂ Clinker (Scope 1)</div>
+                    <div class="result-value" id="resultNetCO2Clink">—</div>
+                    <div class="result-unit">kg CO₂/ton clinker</div>
+                </div>
+            </div>
+
+            <!-- Scope 2 Results -->
+            <div id="scope2Results" style="display: none;">
+                <div class="section-title" style="margin-top: 30px;">Plus Scope 2 - Electricity Emissions</div>
+                <div class="results-grid">
+                    <div class="result-box">
+                        <div class="result-label">Gross CO₂ Cement (Scope 1+2)</div>
+                        <div class="result-value" id="resultGrossCO2CemScope2">—</div>
+                        <div class="result-unit">kg CO₂/ton cement</div>
+                    </div>
+
+                    <div class="result-box">
+                        <div class="result-label">Net CO₂ Cement (Scope 1+2)</div>
+                        <div class="result-value" id="resultNetCO2CemScope2">—</div>
+                        <div class="result-unit">kg CO₂/ton cement</div>
+                    </div>
+
+                    <div class="result-box">
+                        <div class="result-label">Gross CO₂ Clinker (Scope 1+2)</div>
+                        <div class="result-value" id="resultGrossCO2ClinkScope2">—</div>
+                        <div class="result-unit">kg CO₂/ton clinker</div>
+                    </div>
+
+                    <div class="result-box">
+                        <div class="result-label">Net CO₂ Clinker (Scope 1+2)</div>
+                        <div class="result-value" id="resultNetCO2ClinkScope2">—</div>
+                        <div class="result-unit">kg CO₂/ton clinker</div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="copy-btn" id="copyBtn">📋 Copy Results to Clipboard</button>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const cfInput = document.getElementById('cf');
+        const stInput = document.getElementById('st');
+        const bmInput = document.getElementById('bm');
+        const afInput = document.getElementById('af');
+        const calculateBtn = document.getElementById('calculateBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const resultsSection = document.getElementById('resultsSection');
+        const errorBox = document.getElementById('errorBox');
+        const btnCalfDefault = document.getElementById('btnCalfDefault');
+        const btnCalfCalculated = document.getElementById('btnCalfCalculated');
+        const calfCalculatedInputs = document.getElementById('calfCalculatedInputs');
+        const scope2Toggle = document.getElementById('scope2Toggle');
+        const scope2Inputs = document.getElementById('scope2Inputs');
+        const scope2Results = document.getElementById('scope2Results');
+        const copyBtn = document.getElementById('copyBtn');
+
+        // Result elements
+        const resultCalF = document.getElementById('resultCalF');
+        const resultGrossCO2Cem = document.getElementById('resultGrossCO2Cem');
+        const resultNetCO2Cem = document.getElementById('resultNetCO2Cem');
+        const resultGrossCO2Clink = document.getElementById('resultGrossCO2Clink');
+        const resultNetCO2Clink = document.getElementById('resultNetCO2Clink');
+
+        // Scope 2 Result elements
+        const resultGrossCO2CemScope2 = document.getElementById('resultGrossCO2CemScope2');
+        const resultNetCO2CemScope2 = document.getElementById('resultNetCO2CemScope2');
+        const resultGrossCO2ClinkScope2 = document.getElementById('resultGrossCO2ClinkScope2');
+        const resultNetCO2ClinkScope2 = document.getElementById('resultNetCO2ClinkScope2');
+
+        let useCalfDefault = true;
+        let includeScope2 = false;
+
+        // Event Listeners
+        calculateBtn.addEventListener('click', calculate);
+        resetBtn.addEventListener('click', reset);
+        btnCalfDefault.addEventListener('click', () => toggleCalfMode(true));
+        btnCalfCalculated.addEventListener('click', () => toggleCalfMode(false));
+        scope2Toggle.addEventListener('click', toggleScope2);
+        copyBtn.addEventListener('click', copyResultsToClipboard);
+
+        // Toggle Calcination Factor Mode
+        function toggleCalfMode(isDefault) {
+            useCalfDefault = isDefault;
+            btnCalfDefault.classList.toggle('active', isDefault);
+            btnCalfCalculated.classList.toggle('active', !isDefault);
+            calfCalculatedInputs.style.display = isDefault ? 'none' : 'block';
+        }
+
+        // Toggle Scope 2
+        function toggleScope2() {
+            includeScope2 = !includeScope2;
+            scope2Toggle.classList.toggle('active', includeScope2);
+            scope2Inputs.classList.toggle('show', includeScope2);
+            scope2Results.style.display = includeScope2 ? 'block' : 'none';
+        }
+
+        // Calculate Calcination Factor (CalF)
+        function calculateCalF() {
+            if (useCalfDefault) {
+                return 530;
+            }
+
+            const caoClinik = parseFloat(document.getElementById('caoClinik').value) || 0;
+            const mgoClinik = parseFloat(document.getElementById('mgoClinik').value) || 0;
+            const caoAR = parseFloat(document.getElementById('caoAR').value) || 0;
+            const mgoAR = parseFloat(document.getElementById('mgoAR').value) || 0;
+            const quantityAR = parseFloat(document.getElementById('quantityAR').value) || 0;
+
+            const term1 = (caoClinik / 100 * 0.64516 / 56.1 * 44) + (mgoClinik / 100 * 0.64516 / 40.3 * 44);
+            const term2 = (caoAR / 100 * quantityAR / 100 / 56.1 * 44) + (mgoAR / 100 * quantityAR / 100 / 40.3 * 44);
+
+            const calF = ((term1 - term2) / 0.64516) * 1000;
+            return Math.max(calF, 0);
+        }
+
+        // Validate Inputs
+        function validateInputs() {
+            clearErrors();
+            let isValid = true;
+
+            const cf = parseFloat(cfInput.value);
+            const st = parseFloat(stInput.value);
+            const bm = parseFloat(bmInput.value);
+            const af = parseFloat(afInput.value);
+
+            // Validate CF
+            if (isNaN(cf) || cf <= 0) {
+                showError('cfError', 'Clinker Factor must be > 0');
+                cfInput.classList.add('error');
+                isValid = false;
+            } else if (cf > 100) {
+                showError('cfError', 'Clinker Factor cannot exceed 100%');
+                cfInput.classList.add('error');
+                isValid = false;
+            }
+
+            // Validate ST
+            if (isNaN(st) || st < 0) {
+                showError('stError', 'Specific Thermal Energy must be ≥ 0');
+                stInput.classList.add('error');
+                isValid = false;
+            }
+
+            // Validate BM
+            if (isNaN(bm) || bm < 0 || bm > 100) {
+                showError('bmError', 'Biomass TSR must be between 0 and 100%');
+                bmInput.classList.add('error');
+                isValid = false;
+            }
+
+            // Validate AF
+            if (isNaN(af) || af < 0 || af > 100) {
+                showError('afError', 'Alternative Fuel TSR must be between 0 and 100%');
+                afInput.classList.add('error');
+                isValid = false;
+            }
+
+            // Validate BM + AF ≤ 100
+            if (!isNaN(bm) && !isNaN(af) && (bm + af) > 100) {
+                showError('bmError', 'BM + AF cannot exceed 100%');
+                bmInput.classList.add('error');
+                afInput.classList.add('error');
+                isValid = false;
+            }
+
+            // Validate Scope 2 inputs if enabled
+            if (includeScope2) {
+                const secCemPLN = parseFloat(document.getElementById('secCemPLN').value);
+                const secCemRen = parseFloat(document.getElementById('secCemRen').value);
+                const secClinkPLN = parseFloat(document.getElementById('secClinkPLN').value);
+                const secClinkRen = parseFloat(document.getElementById('secClinkRen').value);
+                const gridCO2 = parseFloat(document.getElementById('gridCO2').value);
+
+                if (isNaN(secCemPLN) || secCemPLN < 0) {
+                    showError('secCemPLNError', 'Value must be ≥ 0');
+                    isValid = false;
+                }
+                if (isNaN(secCemRen) || secCemRen < 0) {
+                    showError('secCemRenError', 'Value must be ≥ 0');
+                    isValid = false;
+                }
+                if (isNaN(secClinkPLN) || secClinkPLN < 0) {
+                    showError('secClinkPLNError', 'Value must be ≥ 0');
+                    isValid = false;
+                }
+                if (isNaN(secClinkRen) || secClinkRen < 0) {
+                    showError('secClinkRenError', 'Value must be ≥ 0');
+                    isValid = false;
+                }
+                if (isNaN(gridCO2) || gridCO2 < 0) {
+                    showError('gridCO2Error', 'Value must be ≥ 0');
+                    isValid = false;
+                }
+            }
+
+            return isValid;
+        }
+
+        // Show Error Message
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            if (errorElement) {
+                errorElement.textContent = message;
+                errorElement.classList.add('show');
+            }
+        }
+
+        // Clear All Errors
+        function clearErrors() {
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.classList.remove('show');
+                el.textContent = '';
+            });
+            document.querySelectorAll('input[type="number"]').forEach(el => {
+                el.classList.remove('error');
+            });
+            errorBox.classList.remove('show');
+            errorBox.textContent = '';
+        }
+
+        // Main Calculate Function
+        function calculate() {
+            if (!validateInputs()) {
+                errorBox.textContent = '❌ Please correct the errors above';
+                errorBox.classList.add('show');
+                return;
+            }
+
+            const cf = parseFloat(cfInput.value);
+            const st = parseFloat(stInput.value);
+            const bm = parseFloat(bmInput.value);
+            const af = parseFloat(afInput.value);
+            const calF = calculateCalF();
+
+            // Scope 1 Calculations
+            const fuelEmission = ((af / 100 * st) * 80.9 / 1000000 + ((100 - bm - af) / 100 * st) * 96 / 1000000) * (1 + 0.012);
+            const emissionFactor = calF / 1000 + 1.55 * 0.2 / 100 * 3.664;
+            const totalEmission = fuelEmission + emissionFactor;
+
+            // Specific Gross CO2 Cement Scope 1
+            const grossCO2Cem = (totalEmission) / (1 / cf * 100) * 1000;
+
+            // Specific Net CO2 Cement Scope 1
+            const netCO2Cem = (((100 - bm - af) / 100 * st) * 96 / 1000000 * (1 + 0.012) + emissionFactor) / (1 / cf * 100) * 1000;
+
+            // Specific Gross CO2 Clinker Scope 1
+            const grossCO2Clink = totalEmission * 1000;
+
+            // Specific Net CO2 Clinker Scope 1
+            const netCO2Clink = (((100 - bm - af) / 100 * st) * 96 / 1000000 * (1 + 0.012) + emissionFactor) * 1000;
+
+            // Display Scope 1 Results
+            resultCalF.textContent = calF.toFixed(1);
+            resultGrossCO2Cem.textContent = grossCO2Cem.toFixed(1);
+            resultNetCO2Cem.textContent = netCO2Cem.toFixed(1);
+            resultGrossCO2Clink.textContent = grossCO2Clink.toFixed(1);
+            resultNetCO2Clink.textContent = netCO2Clink.toFixed(1);
+
+            // Scope 2 Calculations
+            if (includeScope2) {
+                const secCemPLN = parseFloat(document.getElementById('secCemPLN').value) || 0;
+                const secCemRen = parseFloat(document.getElementById('secCemRen').value) || 0;
+                const secClinkPLN = parseFloat(document.getElementById('secClinkPLN').value) || 0;
+                const secClinkRen = parseFloat(document.getElementById('secClinkRen').value) || 0;
+                const gridCO2 = parseFloat(document.getElementById('gridCO2').value) || 0.87;
+
+                // Convert gridCO2 from ton CO2/MWh to kg CO2/kWh
+                const gridCO2PerKwh = gridCO2 * 1000 / 1000; // ton CO2/MWh = kg CO2/kWh
+
+                // Scope 2 Emissions
+                const scope2CO2Cem = (secCemPLN - secCemRen) * gridCO2PerKwh;
+                const scope2CO2Clink = (secClinkPLN - secClinkRen) * gridCO2PerKwh;
+
+                // Scope 1+2 Results
+                const grossCO2CemScope2 = grossCO2Cem + scope2CO2Cem;
+                const netCO2CemScope2 = netCO2Cem + scope2CO2Cem;
+                const grossCO2ClinkScope2 = grossCO2Clink + scope2CO2Clink;
+                const netCO2ClinkScope2 = netCO2Clink + scope2CO2Clink;
+
+                resultGrossCO2CemScope2.textContent = grossCO2CemScope2.toFixed(1);
+                resultNetCO2CemScope2.textContent = netCO2CemScope2.toFixed(1);
+                resultGrossCO2ClinkScope2.textContent = grossCO2ClinkScope2.toFixed(1);
+                resultNetCO2ClinkScope2.textContent = netCO2ClinkScope2.toFixed(1);
+            }
+
+            // Show Results
+            resultsSection.classList.add('show');
+            errorBox.classList.remove('show');
+        }
+
+        // Reset Function
+        function reset() {
+            cfInput.value = '';
+            stInput.value = '';
+            bmInput.value = '';
+            afInput.value = '';
+            document.getElementById('secCemPLN').value = '';
+            document.getElementById('secCemRen').value = '';
+            document.getElementById('secClinkPLN').value = '';
+            document.getElementById('secClinkRen').value = '';
+            document.getElementById('gridCO2').value = '0.87';
+            document.getElementById('caoClinik').value = '';
+            document.getElementById('mgoClinik').value = '';
+            document.getElementById('caoAR').value = '';
+            document.getElementById('mgoAR').value = '';
+            document.getElementById('quantityAR').value = '';
+
+            clearErrors();
+            resultsSection.classList.remove('show');
+            scope2Results.style.display = 'none';
+            includeScope2 = false;
+            scope2Toggle.classList.remove('active');
+            scope2Inputs.classList.remove('show');
+            useCalfDefault = true;
+            toggleCalfMode(true);
+        }
+
+        // Copy Results to Clipboard
+        function copyResultsToClipboard() {
+            const results = {
+                "Calcination Factor": resultCalF.textContent,
+                "Gross CO₂ Cement (Scope 1)": resultGrossCO2Cem.textContent,
+                "Net CO₂ Cement (Scope 1)": resultNetCO2Cem.textContent,
+                "Gross CO₂ Clinker (Scope 1)": resultGrossCO2Clink.textContent,
+                "Net CO₂ Clinker (Scope 1)": resultNetCO2Clink.textContent
+            };
+
+            if (includeScope2) {
+                results["Gross CO₂ Cement (Scope 1+2)"] = resultGrossCO2CemScope2.textContent;
+                results["Net CO₂ Cement (Scope 1+2)"] = resultNetCO2CemScope2.textContent;
+                results["Gross CO₂ Clinker (Scope 1+2)"] = resultGrossCO2ClinkScope2.textContent;
+                results["Net CO₂ Clinker (Scope 1+2)"] = resultNetCO2ClinkScope2.textContent;
+            }
+
+            const textToCopy = Object.entries(results)
+                .map(([key, value]) => `${key}: ${value}`)
+                .join('\n');
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                copyBtn.textContent = '✅ Copied!';
+                copyBtn.classList.add('copied');
+                setTimeout(() => {
+                    copyBtn.textContent = '📋 Copy Results to Clipboard';
+                    copyBtn.classList.remove('copied');
+                }, 2000);
+            }).catch(() => {
+                alert('Failed to copy to clipboard');
+            });
+        }
+
+        // Allow Enter key to calculate
+        [cfInput, stInput, bmInput, afInput].forEach(input => {
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') calculate();
+            });
+        });
+    </script>
+</body>
+</html>
