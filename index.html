@@ -320,7 +320,7 @@
 <body>
     <div class="container">
         <h1>🏭 Cement & Clinker CO₂ Calculator</h1>
-        <p class="subtitle">Calculate Scope 1 and Scope 2 CO₂ Emissions</p>
+        <p class="subtitle">Calculate Scope 1 and Scope 2 CO₂ Emissions; oepoyoprakoso@gmail.com</p>
 
         <div class="error-box" id="errorBox"></div>
 
@@ -334,7 +334,7 @@
                         Clinker Factor (CF)
                         <span class="unit">%</span>
                     </label>
-                    <input type="number" id="cf" placeholder="e.g., 85" min="0" step="0.01">
+                    <input type="number" id="cf" placeholder="e.g., 70" min="0" step="0.01">
                     <div class="error-message" id="cfError"></div>
                     <p class="info-text">Ratio of clinker to cement produced</p>
                 </div>
@@ -344,7 +344,7 @@
                         Specific Thermal Energy (ST)
                         <span class="unit">MJ/ton clinker</span>
                     </label>
-                    <input type="number" id="st" placeholder="e.g., 3200" min="0" step="0.01">
+                    <input type="number" id="st" placeholder="e.g., 3300" min="0" step="0.01">
                     <div class="error-message" id="stError"></div>
                     <p class="info-text">Heat consumption in production</p>
                 </div>
@@ -354,7 +354,7 @@
                         TSR Biomass (BM)
                         <span class="unit">%</span>
                     </label>
-                    <input type="number" id="bm" placeholder="e.g., 0" min="0" max="100" step="0.01">
+                    <input type="number" id="bm" placeholder="e.g., 10" min="0" max="100" step="0.01">
                     <div class="error-message" id="bmError"></div>
                     <p class="info-text">Biomass thermal substitution rate</p>
                 </div>
@@ -375,7 +375,7 @@
                 <label>Calcination Factor Selection</label>
                 <div class="button-group">
                     <button class="btn-toggle active" id="btnCalfDefault">Use Default (530 kg CO2/ton Clink)</button>
-                    <button class="btn-toggle" id="btnCalfCalculated">Calculate from Clinker and Raw Materials</button>
+                    <button class="btn-toggle" id="btnCalfCalculated">Calculate from Clinker and Alt Raw Materials</button>
                 </div>
                 <p class="info-text">Choose how to determine the calcination factor</p>
             </div>
@@ -417,7 +417,7 @@
 
                     <div class="form-group">
                         <label class="label-with-unit">
-                            Quantity of AR
+                            Quantity/Proportion of AR in raw meal
                             <span class="unit">%</span>
                         </label>
                         <input type="number" id="quantityAR" placeholder="e.g., 10" min="0" max="100" step="0.01">
@@ -442,7 +442,7 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label class="label-with-unit">
-                            SEC Cement Total (PLN+renewable)
+                            SEC Cement Total (PLN+CPP+renewable)
                             <span class="unit">kWh/ton cement</span>
                         </label>
                         <input type="number" id="secCemPLN" placeholder="e.g., 120" min="0" step="0.01">
@@ -461,10 +461,10 @@
 
                     <div class="form-group">
                         <label class="label-with-unit">
-                            SEC Clinker Total (PLN+Renewable)
+                            SEC Clinker Total (PLN+CPP+Renewable)
                             <span class="unit">kWh/ton clinker</span>
                         </label>
-                        <input type="number" id="secClinkPLN" placeholder="e.g., 140" min="0" step="0.01">
+                        <input type="number" id="secClinkPLN" placeholder="e.g., 60" min="0" step="0.01">
                         <div class="error-message" id="secClinkPLNError"></div>
                     </div>
 
@@ -473,19 +473,19 @@
                             SEC Clinker from Renewable
                             <span class="unit">kWh/ton clinker</span>
                         </label>
-                        <input type="number" id="secClinkRen" placeholder="e.g., 35" min="0" step="0.01">
+                        <input type="number" id="secClinkRen" placeholder="e.g., 10" min="0" step="0.01">
                         <div class="error-message" id="secClinkRenError"></div>
                         <p class="info-text">e.g., PLTS/WHR renewable energy</p>
                     </div>
 
                     <div class="form-group">
                         <label class="label-with-unit">
-                            PLN Grid Electricity Emissions
+                            PLN Grid/mix CPP Electricity Emissions
                             <span class="unit">ton CO₂/MWh</span>
                         </label>
                         <input type="number" id="gridCO2" placeholder="0.87" value="0.87" min="0" step="0.01">
                         <div class="error-message" id="gridCO2Error"></div>
-                        <p class="info-text">Default: 0.87 (Indonesia PLN average)</p>
+                        <p class="info-text">Default: 0.87 (Indonesia Jamali PLN average)</p>
                     </div>
                 </div>
             </div>
